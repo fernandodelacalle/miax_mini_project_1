@@ -6,6 +6,8 @@ on:
     - main
 
 env:
+  IMAGE_TAG: ${{ github.sha }}
+
   AWS_REGION: eu-west-1
   AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -71,10 +73,10 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform -chdir="./terraform" plan
+        run: terraform -chdir="./terraform" plan -var="image_tag=$IMAGE_TAG"
 
       - name: Terraform Apply
         id: apply
-        run: terraform -chdir="./terraform" apply -auto-approve
+        run: terraform -chdir="./terraform" apply -auto-approve -var="image_tag=$IMAGE_TAG"
 
 

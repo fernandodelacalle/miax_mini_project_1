@@ -40,7 +40,7 @@ resource aws_iam_role_policy_attachment lambda_s3 {
 
 resource "aws_lambda_function" "executable" {
   function_name = "market_data_download"
-  image_uri     = "${aws_ecr_repository.api_repository.repository_url}:38283ad1d8d5eb910ba32cefab747c5439c8ec35"
+  image_uri     = "${aws_ecr_repository.api_repository.repository_url}:${vars.image_tag}"
   package_type  = "Image"
   role          = aws_iam_role.lambda_role.arn
 }
