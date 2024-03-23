@@ -19,6 +19,7 @@ defaults:
     shell: bash
 
 jobs:
+
   release:
     name: release
     runs-on: ubuntu-latest
@@ -54,6 +55,7 @@ jobs:
 
   deploy:
     name: Deploy
+    needs: release
     runs-on: ubuntu-latest
     permissions:
       packages: write
