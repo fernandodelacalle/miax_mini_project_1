@@ -31,15 +31,12 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_execution" {
 }
 
 # resource "aws_cloudwatch_log_group" "hello_world" {
-#   name = "/aws/lambda/${aws_lambda_function.executable.function_name}"
+#   name = "/aws/lambda/${aws_lambda_function.lambda_market_data_download.function_name}"
 #   retention_in_days = 30
 # }
 
 
-
-
-
-resource "aws_lambda_function" "executable" {
+resource "aws_lambda_function" "lambda_market_data_download" {
   function_name = "market_data_download"
   image_uri     = "${aws_ecr_repository.api_repository.repository_url}:${var.image_tag}"
   package_type  = "Image"
@@ -65,12 +62,12 @@ resource "aws_cloudwatch_event_rule" "lambda_every_5_minutes" {
 resource "aws_cloudwatch_event_target" "trigger_lambda_on_schedule" {
   rule      = aws_cloudwatch_event_rule.lambda_every_5_minutes.name
   target_id = "lambda"
-  arn       = aws_lambda_function.executable.arn
+  arn       = aws_lambda_function.lambda_market_data_download.arn
 }
 resource "aws_lambda_permission" "allow_cloudwatch_to_call_split_lambda" {
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.aws_lambda_function.function_name
+  function_name = aws_lambda_function.lambda_market_data_download.function_name
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.lambda_every_5_minutes.arn
 }
