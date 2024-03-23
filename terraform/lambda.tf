@@ -1,42 +1,35 @@
-data aws_iam_policy_document lambda_assume_role {
-  statement {
-    actions = ["sts:AssumeRole"]
+resource "aws_iam_role" "lambda_role" {
+  name = "serverless_lambda"
 
-    principals {
-      type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
-    }
-  }
-}
-
-resource aws_iam_role lambda_role {
-  name               = "lambda-role-market_data_download"
-  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
-}
-
-data aws_iam_policy_document lambda_s3 {
-  statement {
-    actions = [
-      "s3:*",
-      "s3-object-lambda:*"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Sid    = ""
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+      }
     ]
-
-    resources = [
-      "arn:aws:s3:::bucket/*"
-    ]
-  }
+  })
 }
 
-resource aws_iam_policy lambda_s3 {
-  name        = "lambda-s3-permissions-market_data_download"
-  description = "Contains S3 put permission for lambda"
-  policy      = data.aws_iam_policy_document.lambda_s3.json
-}
-
-resource aws_iam_role_policy_attachment lambda_s3 {
+resource "aws_iam_role_policy_attachment" "lambda_policy_s3" {
   role       = aws_iam_role.lambda_role.name
-  policy_arn = aws_iam_policy.lambda_s3.arn
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
+
+resource "aws_iam_role_policy_attachment" "lambda_policy_dynamo" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_policy_execution" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
 
 resource "aws_lambda_function" "executable" {
   function_name = "market_data_download"
