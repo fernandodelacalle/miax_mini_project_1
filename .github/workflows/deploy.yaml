@@ -13,8 +13,10 @@ env:
   AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   ECR_REPOSITORY: market_data_download
-  #LAMBDA_NAME: echo_lambda_2
   DOCKERFILE_PATH: dockerfiles/market_data_download/Dockerfile
+
+  ECR_REPOSITORY_API: api
+  DOCKERFILE_PATH_API: dockerfiles/api/Dockerfile
 
 defaults:
   run:
@@ -22,8 +24,8 @@ defaults:
 
 jobs:
 
-  release:
-    name: release
+  release-lambda:
+    name: release-lambda
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -55,9 +57,44 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
+
+  release-api:
+    name: release-api
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      # Image Build
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@13d241b293754004c80624b5567555c4a39ffbe3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # Build a docker container and
+          # push it to ECR so that it can
+          # be deployed to ECS.
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_API:$IMAGE_TAG -f $DOCKERFILE_PATH_API .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_API:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY_API:$IMAGE_TAG"
+
+
   deploy:
     name: Deploy
-    needs: release
+    needs: release-lambda
     runs-on: ubuntu-latest
     permissions:
       packages: write

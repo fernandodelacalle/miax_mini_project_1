@@ -38,7 +38,7 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_execution" {
 
 resource "aws_lambda_function" "lambda_market_data_download" {
   function_name = "market_data_download"
-  image_uri     = "${aws_ecr_repository.api_repository.repository_url}:${var.image_tag}"
+  image_uri     = "${aws_ecr_repository.ecr_market_data_download.repository_url}:${var.image_tag}"
   package_type  = "Image"
   role          = aws_iam_role.lambda_role.arn
   memory_size   = 512
