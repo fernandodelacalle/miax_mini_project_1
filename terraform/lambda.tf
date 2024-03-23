@@ -10,7 +10,7 @@ data aws_iam_policy_document lambda_assume_role {
 }
 
 resource aws_iam_role lambda_role {
-  name               = "lambda-role"
+  name               = "lambda-role-market_data_download"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
 
@@ -28,7 +28,7 @@ data aws_iam_policy_document lambda_s3 {
 }
 
 resource aws_iam_policy lambda_s3 {
-  name        = "lambda-s3-permissions"
+  name        = "lambda-s3-permissions-market_data_download"
   description = "Contains S3 put permission for lambda"
   policy      = data.aws_iam_policy_document.lambda_s3.json
 }
