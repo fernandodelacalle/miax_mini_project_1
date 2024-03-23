@@ -45,4 +45,10 @@ resource "aws_lambda_function" "executable" {
   role          = aws_iam_role.lambda_role.arn
   memory_size = 512
   timeout = 300
+
+  lifecycle {
+    ignore_changes = [
+      environment,
+    ]
+  }
 }
