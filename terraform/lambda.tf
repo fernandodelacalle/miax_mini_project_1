@@ -31,6 +31,11 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_execution" {
 }
 
 
+resource "aws_cloudwatch_log_group" "hello_world" {
+  name = "/aws/lambda/${aws_lambda_function.executable.function_name}"
+  retention_in_days = 30
+}
+
 resource "aws_lambda_function" "executable" {
   function_name = "market_data_download"
   image_uri     = "${aws_ecr_repository.api_repository.repository_url}:${var.image_tag}"
