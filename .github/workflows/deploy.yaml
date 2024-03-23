@@ -94,7 +94,7 @@ jobs:
 
   deploy:
     name: Deploy
-    needs: release-lambda
+    needs: [release-lambda, release-api]
     runs-on: ubuntu-latest
     permissions:
       packages: write

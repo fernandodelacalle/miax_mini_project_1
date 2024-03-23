@@ -8,25 +8,6 @@ def suma(a: int, b: int):
     return a + b
 
 
-@app.get("/resta")
-def resta(
-    a: int,
-    b: int,
-):
-    return a - b
-
-
-@app.get("/mult")
-def mult(
-    a: int,
-    b: int,
-):
-    return a * b
-
-
-@app.get("/divi")
-def divi(
-    a: int,
-    b: int,
-):
-    return a / b
+@app.get("/echo")
+def echo(name: str):
+    return f"hola: {name}"
