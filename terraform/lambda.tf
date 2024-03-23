@@ -17,8 +17,8 @@ resource aws_iam_role lambda_role {
 data aws_iam_policy_document lambda_s3 {
   statement {
     actions = [
-      "s3:PutObject",
-      "s3:PutObjectAcl"
+      "s3:*",
+      "s3-object-lambda:*"
     ]
 
     resources = [
