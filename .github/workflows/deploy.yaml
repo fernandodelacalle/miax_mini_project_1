@@ -7,12 +7,12 @@ on:
 
 env:
   AWS_REGION: eu-west-1
+  AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
   ECR_REPOSITORY: echo_lambda
   LAMBDA_NAME: echo_lambda_2
   DOCKERFILE_PATH: dockerfiles/echo_lambda/Dockerfile
-
-  AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 defaults:
   run:
@@ -36,7 +36,7 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform -chdir="./terraform" plan -no-color
+        run: terraform -chdir="./terraform" plan
 
       - name: Terraform Apply
         id: apply
