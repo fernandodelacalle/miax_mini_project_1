@@ -19,16 +19,14 @@ defaults:
     shell: bash
 
 jobs:
-  deploy:
-    name: Deploy
+  release:
+    name: release
     runs-on: ubuntu-latest
     permissions:
       packages: write
       contents: read
-
     steps:
       - uses: actions/checkout@v4
-
       # Image Build
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@13d241b293754004c80624b5567555c4a39ffbe3
@@ -54,7 +52,15 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
 
+    steps:
+      - uses: actions/checkout@v4
       # TERRAFORM PART-----------
       - uses: hashicorp/setup-terraform@v3
       - name: Terraform Init
