@@ -41,8 +41,8 @@ resource "aws_lambda_function" "lambda_market_data_download" {
   image_uri     = "${aws_ecr_repository.api_repository.repository_url}:${var.image_tag}"
   package_type  = "Image"
   role          = aws_iam_role.lambda_role.arn
-  memory_size = 512
-  timeout = 300
+  memory_size   = 512
+  timeout       = 300
 
   lifecycle {
     ignore_changes = [

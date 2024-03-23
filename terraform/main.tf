@@ -6,9 +6,9 @@ terraform {
     }
   }
   backend "s3" {
-      bucket = "tfstatemiax"
-      key    = "miniproject1"
-      region = "eu-west-1"
+    bucket = "tfstatemiax"
+    key    = "miniproject1"
+    region = "eu-west-1"
   }
   required_version = ">= 1.2.0"
 }
